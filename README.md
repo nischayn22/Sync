@@ -28,6 +28,11 @@ Now run:
       'username' => "Nischayn22",
       'password' => "Password",
       'copy_ns' => array( 0 ),
+      'live_edit' => true,
+      'live_create' => true,
+      'live_move' => true,
+      'live_delete' => true,
+      'translate' => true,
       'translate' => false,
       'translate_to' => 'hi'
     );
