@@ -3,5 +3,14 @@
 	"version": "1.0",
 	"author": "Nischayn22",
 	"url": "https://www.mediawiki.org/wiki/Extension:Sync",
+	"AutoloadClasses": {
+		"SyncHooks": "Sync.hooks.php"
+	},
+	"Hooks": {
+		"PageContentInsertComplete": "SyncHooks::onPageContentInsertComplete",
+		"PageContentSaveComplete": "SyncHooks::onPageContentSaveComplete",
+		"TitleMoveComplete": "SyncHooks::onTitleMoveComplete",
+		"ArticleDeleteComplete": "SyncHooks::onArticleDeleteComplete"
+	},
 	"manifest_version": 1
 }
