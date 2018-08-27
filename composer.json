@@ -1,0 +1,22 @@
+{
+	"name": "mediawiki/sync",
+	"type": "mediawiki-extension",
+	"description": "A MediaWiki extension that selective sync's your wiki with multiple other wikis.",
+	"keywords": [
+		"Sync",
+		"Wiki",
+		"MediaWiki"
+	],
+	"homepage": "https://www.mediawiki.org/wiki/Extension:Sync",
+	"license": "GPL-2.0-or-later",
+	"authors": [
+		{
+			"name": "Nischay Nahata",
+			"role": "Developer"
+		}
+	],
+	"require": {
+		"google/cloud-translate": "^1.2",
+		"nischayn22/mediawiki-api": "dev-master"
+	}
+}

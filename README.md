@@ -2,17 +2,15 @@
 A MediaWiki extension that selective sync's your wiki with multiple other wikis.
 
 
-## Installation
+# Installation
 
-Add the following to your wiki's composer.json's require:
+	Download this repo on your extensions folder
+	Add the following on your LocalSettings.php: wfLoadExtension( 'Sync' );
+    Run the following command on your main directory: "composer require google/cloud-translate"
+    Run the following command on your main directory: "composer require nischayn22/mediawiki-api"
+	Set environment variables for the Cloud Translate API. See https://cloud.google.com/translate/docs/reference/libraries#client-libraries-install-php
 
-    "google/cloud-translate": "^1.2",
-    "nischayn22/mediawiki-api": "dev-master"
-Now run:
-
-    composer update
-
-## Configuration
+# Configuration
 
     // Only required if login is required to read
     $wgSyncReadUser = array(
@@ -33,6 +31,5 @@ Now run:
       'live_move' => true,
       'live_delete' => true,
       'translate' => true,
-      'translate' => false,
       'translate_to' => 'hi'
     );
