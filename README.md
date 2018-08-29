@@ -12,14 +12,6 @@ A MediaWiki extension that selective sync's your wiki with multiple other wikis.
 
 # Configuration
 
-    // Only required if login is required to read
-    $wgSyncReadUser = array(
-      'username' => "Nischayn22",
-      'password' => "Password"
-    );
-
-    $wgSyncGoogleTranslateProjectId = 'xyz'; // Only needed if you want to enable translate
-
     // Add any such lines for multiple wikis
     $wgSyncWikis[] = array(
       'api_path' => "http://localhost/test",

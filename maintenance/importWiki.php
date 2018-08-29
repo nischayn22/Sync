@@ -18,18 +18,21 @@ class ImportWiki extends Maintenance {
 	}
 
 	public function execute() {
-		global $wgSyncWikis, $wgSyncReadUser, $wgSyncGoogleTranslateProjectId, $wgServer, $wgScriptPath;
+		global $wgSyncWikis;
 
-		$sourceWiki = new MediaWikiApi( $wgServer . $wgScriptPath );
-		$sourceWiki->login( $wgSyncReadUser['username'], $wgSyncReadUser['password'] );
-
+		$dbr = wfGetDB( DB_SLAVE );
 		foreach ( $wgSyncWikis as $wgSyncWiki ) {
 			$pages = array();
 			if( count( $wgSyncWiki['copy_ns'] ) > 0 ) {
 				foreach( $wgSyncWiki['copy_ns'] as $namespaceId ) {
-					$result = $sourceWiki->listPageInNamespace( $namespaceId );
-					foreach( $result as $page ) {
-						$pages[] = (string)$page['title'];
+					$conds = [ 'page_namespace' => $namespaceId, 'page_is_redirect' => 0 ];
+					$res = $dbr->select( 'page',
+						[ 'page_title', 'page_id' ],
+						$conds,
+						__METHOD__
+					);
+					foreach( $res as $row ) {
+						$pages[$row->page_id] = $row->page_title;
 					}
 				}
 			}
@@ -40,17 +43,22 @@ class ImportWiki extends Maintenance {
 				echo "Successfully logged in\n";
 			}
 
-			foreach( $pages as $pageName ) {
-				$content = $sourceWiki->readPage( $pageName );
+			$autoTranslate = new AutoTranslate( $wgSyncWiki['translate_to'] );
+
+			foreach( $pages as $pageid => $pageName ) {
 				if ( $wgSyncWiki['translate'] ) {
-					$syncWiki->setTranslateSettings( $wgSyncGoogleTranslateProjectId, $wgSyncWiki['translate_to'] );
-					$content = $syncWiki->translateWikiText( $content );
-				}
-				$data = $syncWiki->editPage( $pageName, $content );
-				if ( $data ) {
-					echo "Synced $pageName\n";
+					$title = $autoTranslate->translateTitle( $pageid );
+					$content = $autoTranslate->translate( $pageid );
 				} else {
-					echo "Could not sync $pageName\n";
+					$revision = Revision::newFromPageId( $pageid );
+					$content = ContentHandler::getContentText( $revision->getContent( Revision::RAW ) );
+					$title = $pageName;
+				}
+				$data = $syncWiki->editPage( $title, $content );
+				if ( $data ) {
+					echo "Synced $title\n";
+				} else {
+					echo "Could not sync $title\n";
 				}
 			}
 		}
