@@ -56,9 +56,9 @@ class ImportWiki extends Maintenance {
 				}
 				$data = $syncWiki->editPage( $title, $content );
 				if ( $data ) {
-					echo "Synced $title\n";
+					echo "Synced $pageName as $title\n";
 				} else {
-					echo "Could not sync $title\n";
+					echo "Could not sync $pageName\n";
 				}
 			}
 		}
