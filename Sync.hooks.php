@@ -99,4 +99,20 @@ class SyncHooks {
 		}
 		return true;
 	}
+
+	public static function onSkinTemplateNavigation( SkinTemplate &$skinTemplate, array &$links ) {
+		global $wgUser;
+		if ( !in_array( 'sysop', $wgUser->getEffectiveGroups()) ) {
+			return true;
+		}
+		$request = $skinTemplate->getRequest();
+		$action = $request->getText( 'action' );
+		$links['actions']['sync'] = array(
+			'class' => ( $action == 'sync') ? 'selected' : false,
+			'text' => "Sync",
+			'href' => $skinTemplate->makeArticleUrlDetails(
+				$skinTemplate->getTitle()->getFullText(), 'action=sync' )['href']
+		);
+		return true;
+	}
 }

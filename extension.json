@@ -4,13 +4,18 @@
 	"author": "Nischayn22",
 	"url": "https://www.mediawiki.org/wiki/Extension:Sync",
 	"AutoloadClasses": {
-		"SyncHooks": "Sync.hooks.php"
+		"SyncHooks": "Sync.hooks.php",
+		"SyncAction": "SyncAction.php"
 	},
 	"Hooks": {
 		"PageContentInsertComplete": "SyncHooks::onPageContentInsertComplete",
 		"PageContentSaveComplete": "SyncHooks::onPageContentSaveComplete",
 		"TitleMoveComplete": "SyncHooks::onTitleMoveComplete",
-		"ArticleDeleteComplete": "SyncHooks::onArticleDeleteComplete"
+		"ArticleDeleteComplete": "SyncHooks::onArticleDeleteComplete",
+		"SkinTemplateNavigation": "SyncHooks::onSkinTemplateNavigation"
+	},
+	"Actions": {
+		"sync": "SyncAction"
 	},
 	"manifest_version": 1
 }
