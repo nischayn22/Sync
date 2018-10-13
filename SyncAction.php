@@ -37,14 +37,25 @@ class SyncAction extends FormAction {
 					unset( $comment['children'] );
 				}
 			}
-			$comments = json_encode( array_merge( $comments, $child_comments ) );
+			$comments = array_merge( $comments, $child_comments );
+			// Generate Export
+			$exporter = new WikiExporter( wfGetDB( DB_MASTER ) );
+			$comments_export = new DumpStringOutput;
+			$exporter->setOutputSink( $comments_export );
+			$exporter->openStream();
+			foreach ( $comments as $comment_data ) {
+				$exporter->pageByTitle( Title::newFromText( $comment_data['comment_page_title'] ) );
+			}
+			$exporter->closeStream();
+			$comments_json = json_encode( $comments );
 		}
 		
 		foreach ( $wgSyncWikis as $wgSyncWiki ) {
 			$syncWiki = new MediaWikiApi( $wgSyncWiki['api_path'] );
 			if ( $syncWiki->login( $wgSyncWiki['username'], $wgSyncWiki['password'] ) ) {
 				if ( class_exists( 'CommentStreams' ) ) {
-					$syncWiki->importComments( $title, $comments );
+					$syncWiki->importXML( $comments_export->__toString() );
+					$syncWiki->importCommentsMetadata( $title, $comments_json );
 				}
 				if ( $wgSyncWiki['translate'] ) {
 					$autoTranslate = new AutoTranslate( $wgSyncWiki['translate_to'] );
@@ -77,7 +88,7 @@ class SyncAction extends FormAction {
 				'type' => 'info',
 				'vertical-label' => true,
 				'raw' => true,
-				'default' => "Confirm Sync?"
+				'default' => "Confirm Sync (this may take a while)?"
 			]
 		];
 	}
