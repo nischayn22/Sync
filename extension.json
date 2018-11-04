@@ -12,7 +12,8 @@
 		"PageContentSaveComplete": "SyncHooks::onPageContentSaveComplete",
 		"TitleMoveComplete": "SyncHooks::onTitleMoveComplete",
 		"ArticleDeleteComplete": "SyncHooks::onArticleDeleteComplete",
-		"SkinTemplateNavigation": "SyncHooks::onSkinTemplateNavigation"
+		"SkinTemplateNavigation": "SyncHooks::onSkinTemplateNavigation",
+		"TranslationsApproved": "SyncHooks::onTranslationsApproved"
 	},
 	"Actions": {
 		"sync": "SyncAction"

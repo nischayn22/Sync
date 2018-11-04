@@ -4,9 +4,35 @@ use Nischayn22\MediaWikiApi;
 
 class SyncHooks {
 
+	public static function onTranslationsApproved( $pageId, $target_lang ) {
+		global $wgSyncWikis;
+
+		$title = '';
+		foreach ( $wgSyncWikis as $wgSyncWiki ) {
+			if ( $wgSyncWiki['translate_to'] != $target_lang ) {
+				continue;
+			}
+			$syncWiki = new MediaWikiApi( $wgSyncWiki['api_path'] );
+			if ( $syncWiki->login( $wgSyncWiki['username'], $wgSyncWiki['password'] ) ) {
+				if ( $wgSyncWiki['translate'] ) {
+					$autoTranslate = new AutoTranslate( $target_lang );
+					$title = $autoTranslate->translateTitle( $pageId );
+					$content = $autoTranslate->translate( $pageId );
+				} else {
+					$revision = $wikiPage->getRevision();
+					$content = ContentHandler::getContentText( $revision->getContent( Revision::RAW ) );
+					$title = Title::newFromId( $pageId )->getFullText();
+				}
+				$syncWiki->editPage( $title, $content );
+			}
+		}
+		return true;
+	}
+
 	public static function onPageContentSaveComplete( &$wikiPage, &$user, $content, $summary, $isMinor, $isWatch, $section, &$flags, $revision, &$status, $baseRevId, $undidRevId ) {
 		global $wgSyncWikis;
-		$title = $wikiPage->getTitle()->getFullText();
+
+		$title = '';
 		foreach ( $wgSyncWikis as $wgSyncWiki ) {
 			if ( !$wgSyncWiki['live_edit'] ) {
 				continue;
@@ -16,12 +42,11 @@ class SyncHooks {
 				if ( $wgSyncWiki['translate'] ) {
 					$autoTranslate = new AutoTranslate( $wgSyncWiki['translate_to'] );
 					$title = $autoTranslate->translateTitle( $wikiPage->getId() );
-					$content = $autoTranslate->translate( $wikiPage->getId() );
+					$syncWiki->editPage( $title, $autoTranslate->translate( $wikiPage->getId() ) );
 				} else {
-					$revision = $wikiPage->getRevision();
-					$content = ContentHandler::getContentText( $revision->getContent( Revision::RAW ) );
+					$title = $wikiPage->getTitle()->getFullText();
+					$syncWiki->editPage( $title, $content );
 				}
-				$syncWiki->editPage( $title, $content );
 			}
 		}
 		return true;
