@@ -47,7 +47,6 @@ class SyncAction extends FormAction {
 				$exporter->pageByTitle( Title::newFromText( $comment_data['comment_page_title'] ) );
 			}
 			$exporter->closeStream();
-			$comments_json = json_encode( $comments );
 		}
 		
 		foreach ( $wgSyncWikis as $wgSyncWiki ) {
@@ -55,7 +54,6 @@ class SyncAction extends FormAction {
 			if ( $syncWiki->login( $wgSyncWiki['username'], $wgSyncWiki['password'] ) ) {
 				if ( class_exists( 'CommentStreams' ) ) {
 					$syncWiki->importXML( $comments_export->__toString() );
-					$syncWiki->importCommentsMetadata( $title, $comments_json );
 				}
 				if ( $wgSyncWiki['translate'] ) {
 					$autoTranslate = new AutoTranslate( $wgSyncWiki['translate_to'] );
