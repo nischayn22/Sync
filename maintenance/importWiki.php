@@ -64,7 +64,9 @@ class ImportWiki extends Maintenance {
 				echo "Successfully logged in\n";
 			}
 
-			$autoTranslate = new AutoTranslate( $wgSyncWiki['translate_to'] );
+			if ($wgSyncWiki['translate']) {
+				$autoTranslate = new AutoTranslate( $wgSyncWiki['translate_to'] );
+			}
 
 			foreach( $pages as $pageid => $pageName ) {
 				if ( $wgSyncWiki['translate'] ) {
