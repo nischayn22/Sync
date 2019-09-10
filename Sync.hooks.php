@@ -45,7 +45,7 @@ class SyncHooks {
 					$syncWiki->editPage( $title, $autoTranslate->translate( $wikiPage->getId() ) );
 				} else {
 					$title = $wikiPage->getTitle()->getFullText();
-					$syncWiki->editPage( $title, $content );
+					$syncWiki->editPage( $title, $content->getNativeData() );
 				}
 			}
 		}
